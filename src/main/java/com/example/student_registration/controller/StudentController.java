@@ -8,6 +8,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// MAIN CONTROLLER FOR ROOT URL
+@Controller
+class MainController {
+    @GetMapping("/")
+    public String rootHome() {
+        return "home";       // your main link → home.html
+    }
+}
+
 @Controller
 @RequestMapping("/students")
 public class StudentController {
@@ -18,51 +27,36 @@ public class StudentController {
         this.studentRepository = studentRepository;
     }
 
-    // -----------------------------------------
-    // 1) HOME PAGE
-    // -----------------------------------------
+    // HOME PAGE inside students (optional)
     @GetMapping("/home")
     public String homePage() {
-        return "home";   // loads home.html
+        return "home";
     }
 
-    // -----------------------------------------
-    // 2) STUDENT LIST PAGE
-    // -----------------------------------------
     @GetMapping("/list")
     public String listStudents(Model model) {
         List<Student> allStudents = studentRepository.findAll();
         model.addAttribute("students", allStudents);
-        return "studentsList";   // loads studentsList.html
+        return "studentsList";
     }
 
-    // -----------------------------------------
-    // 3) REST API to get all students (JSON)
-    // -----------------------------------------
     @GetMapping("/api")
     @ResponseBody
     public List<Student> getAllStudents() {
         return studentRepository.findAll();
     }
 
-    // -----------------------------------------
-    // 4) SHOW STUDENT REGISTRATION FORM
-    // -----------------------------------------
     @GetMapping("/form")
     public String showForm(Model model) {
         model.addAttribute("student", new Student());
-        return "studentForm";   // loads studentForm.html
+        return "studentForm";
     }
 
-    // -----------------------------------------
-    // 5) PROCESS STUDENT FORM SUBMISSION
-    // -----------------------------------------
-    @PostMapping
+    @PostMapping("/save")
     public String submitForm(@ModelAttribute Student student, Model model) {
         studentRepository.save(student);
         model.addAttribute("message", "Student registered successfully!");
-        model.addAttribute("student", new Student()); // resets form
-        return "studentForm";  
+        model.addAttribute("student", new Student());
+        return "studentForm";
     }
-
 }
